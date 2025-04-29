@@ -1,3 +1,33 @@
+const ALLOWED_USERS = ["eisp0", "eisp1", "eisp2", "eisp3", "eisp9"];
+let userCode = localStorage.getItem("eisUser");
+
+// JSONBin Zugangsdaten
+const BIN_ID = "68112fd0eb52f179214af68b";
+const API_KEY = "$2a$10$TFZncjnXL6i5/i9y7jMDIe6GlWMlF/g4F/u2KnHI7QfGvNV5BQls.";
+
+function login() {
+  const input = document.getElementById("userCodeInput").value.trim();
+  if (ALLOWED_USERS.includes(input)) {
+    userCode = input;
+    localStorage.setItem("eisUser", input);
+    showMainApp();
+  } else {
+    alert("Ungültiger Code");
+  }
+}
+
+function showMainApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("mainApp").style.display = "block";
+  loadData(); // Daten aus JSONBin laden
+}
+
+window.onload = () => {
+  if (userCode && ALLOWED_USERS.includes(userCode)) {
+    showMainApp();
+  }
+};
+
 const tableBody = document.getElementById("tableBody");
 
 function loadData() {
