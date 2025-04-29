@@ -51,19 +51,14 @@
       </div>
     </div>
   </div>
+<!-- 📜 Scripts -->
+<script src="script.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js') // ← hier liegt der Fehler!
+      .then(() => console.log("✅ Service Worker registriert"))
+      .catch(err => console.error("❌ Service Worker Fehler:", err));
+  }
+</script>
 
-  <!-- 📜 Scripts -->
-  <script src="script.js"></script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log("✅ Service Worker registriert"))
-        .catch(err => console.error("❌ Service Worker Fehler:", err));
-    }
-  </script>
-</body>
-</html>
-
-</body>
-</html>
 
