@@ -1,10 +1,23 @@
+// =====================
+// Eistabelle script.js
+// =====================
+
+// 🔐 Login-Codes
 const ALLOWED_USERS = ["eisp0", "eisp1", "eisp2", "eisp3", "eisp9"];
 let userCode = localStorage.getItem("eisUser");
 
-// JSONBin Zugangsdaten
+// 🔐 JSONBin Zugang
 const BIN_ID = "68112fd0eb52f179214af68b";
 const API_KEY = "$2a$10$TFZncjnXL6i5/i9y7jMDIe6GlWMlF/g4F/u2KnHI7QfGvNV5BQls.";
 
+// 🔁 Bei Seitenaufruf automatisch einloggen, wenn möglich
+window.onload = () => {
+  if (userCode && ALLOWED_USERS.includes(userCode)) {
+    showMainApp();
+  }
+};
+
+// 🔓 Login-Vorgang
 function login() {
   const input = document.getElementById("userCodeInput").value.trim();
   if (ALLOWED_USERS.includes(input)) {
@@ -16,55 +29,53 @@ function login() {
   }
 }
 
+// ▶️ Hauptansicht aktivieren
 function showMainApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("mainApp").style.display = "block";
-  loadData(); // Daten aus JSONBin laden
-  setInterval(loadData, 10000); // Live-Update
+  loadData();
+  setInterval(loadData, 10000); // alle 10 Sekunden neu laden
 }
 
-window.onload = () => {
-  if (userCode && ALLOWED_USERS.includes(userCode)) {
-    showMainApp();
-  }
-};
-
-const tableBody = document.getElementById("tableBody");
-
+// 📥 Daten aus JSONBin laden
 async function loadData() {
   try {
-    const res = await fetch(https://api.jsonbin.io/v3/b/${BIN_ID}/latest, {
-      headers: {
-        'X-Master-Key': API_KEY
-      }
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { 'X-Master-Key': API_KEY }
     });
     const data = await res.json();
     renderTable(data.record);
   } catch (err) {
-    console.error("Fehler beim Laden", err);
+    console.error("Fehler beim Laden:", err);
     alert("Fehler beim Laden der Daten");
   }
 }
 
+// 🧾 Tabelle rendern
+const tableBody = document.getElementById("tableBody");
+
 function renderTable(dataArray) {
   tableBody.innerHTML = "";
-  dataArray.forEach(row => {
-    addRow(row.name, row.laden, row.lager);
+  dataArray.forEach(row => addRow(row.name, row.laden, row.lager));
+}
+
+// 📝 Tabelle auslesen
+function getTableData() {
+  return Array.from(tableBody.querySelectorAll("tr")).map(row => {
+    const inputs = row.querySelectorAll("input");
+    return {
+      name: inputs[0]?.value || "",
+      laden: inputs[1]?.value || "",
+      lager: inputs[2]?.value || ""
+    };
   });
 }
 
-function getTableData() {
-  return Array.from(document.querySelectorAll("#eisTable tbody tr")).map(row => ({
-    name: row.cells[0].querySelector("input").value,
-    laden: row.cells[1].querySelector("input").value,
-    lager: row.cells[2].querySelector("input").value
-  }));
-}
-
+// 💾 Daten zentral speichern
 async function saveData() {
   const data = getTableData();
   try {
-    await fetch(https://api.jsonbin.io/v3/b/${BIN_ID}, {
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -74,15 +85,17 @@ async function saveData() {
     });
     console.log("Zentral gespeichert");
   } catch (err) {
-    console.error("Fehler beim Speichern", err);
+    console.error("Fehler beim Speichern:", err);
     alert("Fehler beim Speichern");
   }
 }
 
+// 💾 Autosave bei Eingabe
 function autoSave() {
   saveData();
 }
 
+// ➕ Neue Zeile
 function addRow(name = "", laden = "", lager = "") {
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -91,14 +104,14 @@ function addRow(name = "", laden = "", lager = "") {
     <td><input type="number" value="${lager}" oninput="autoSave()"></td>
   `;
   tableBody.appendChild(row);
-  autoSave();
 }
 
+// 🗑️ Löschen öffnen
 function showDeleteModal() {
   const select = document.getElementById("deleteSelect");
   select.innerHTML = "";
-  document.querySelectorAll("#eisTable tbody tr").forEach((row, idx) => {
-    const name = row.cells[0].querySelector("input").value || "(leer)";
+  tableBody.querySelectorAll("tr").forEach((row, idx) => {
+    const name = row.querySelector("input").value || "(leer)";
     const option = document.createElement("option");
     option.value = idx;
     option.textContent = name;
@@ -107,19 +120,20 @@ function showDeleteModal() {
   document.getElementById("deleteModal").style.display = "block";
 }
 
+// ❌ Löschen abbrechen
 function hideDeleteModal() {
   document.getElementById("deleteModal").style.display = "none";
 }
 
+// ❌ Zeile löschen
 function deleteRow() {
   const idx = document.getElementById("deleteSelect").value;
-  const rows = document.querySelectorAll("#eisTable tbody tr");
+  const rows = tableBody.querySelectorAll("tr");
   if (rows[idx]) {
     rows[idx].remove();
     autoSave();
     hideDeleteModal();
   }
-}
 }
 
 
