@@ -20,6 +20,7 @@ function showMainApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("mainApp").style.display = "block";
   loadData(); // Daten aus JSONBin laden
+  setInterval(loadData, 10000); // Live-Update
 }
 
 window.onload = () => {
@@ -30,22 +31,56 @@ window.onload = () => {
 
 const tableBody = document.getElementById("tableBody");
 
-function loadData() {
-  const saved = localStorage.getItem("eisData");
-  if (saved) {
-    tableBody.innerHTML = saved;
-    Array.from(document.querySelectorAll("input")).forEach(el => {
-      el.addEventListener("input", autoSave);
+async function loadData() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: {
+        'X-Master-Key': API_KEY
+      }
     });
-  } else {
-    addRow("Schoko", "4", "2");
-    addRow("Vanille", "", "");
-    addRow("Erdbeere", "", "");
+    const data = await res.json();
+    renderTable(data.record);
+  } catch (err) {
+    console.error("Fehler beim Laden", err);
+    alert("Fehler beim Laden der Daten");
+  }
+}
+
+function renderTable(dataArray) {
+  tableBody.innerHTML = "";
+  dataArray.forEach(row => {
+    addRow(row.name, row.laden, row.lager);
+  });
+}
+
+function getTableData() {
+  return Array.from(document.querySelectorAll("#eisTable tbody tr")).map(row => ({
+    name: row.cells[0].querySelector("input").value,
+    laden: row.cells[1].querySelector("input").value,
+    lager: row.cells[2].querySelector("input").value
+  }));
+}
+
+async function saveData() {
+  const data = getTableData();
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": API_KEY
+      },
+      body: JSON.stringify(data)
+    });
+    console.log("Zentral gespeichert");
+  } catch (err) {
+    console.error("Fehler beim Speichern", err);
+    alert("Fehler beim Speichern");
   }
 }
 
 function autoSave() {
-  localStorage.setItem("eisData", tableBody.innerHTML);
+  saveData();
 }
 
 function addRow(name = "", laden = "", lager = "") {
@@ -58,13 +93,6 @@ function addRow(name = "", laden = "", lager = "") {
   tableBody.appendChild(row);
   autoSave();
 }
-
-function saveData() {
-  localStorage.setItem("eisData", tableBody.innerHTML);
-  alert("Gespeichert!");
-}
-
-window.onload = loadData;
 
 function showDeleteModal() {
   const select = document.getElementById("deleteSelect");
@@ -92,3 +120,4 @@ function deleteRow() {
     hideDeleteModal();
   }
 }
+
