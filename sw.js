@@ -1,5 +1,6 @@
 // 📦 Installation: Dateien in Cache speichern
 self.addEventListener("install", event => {
+  self.skipWaiting(); // sofort aktivieren
   event.waitUntil(
     caches.open("eis-store").then(cache => {
       return cache.addAll([
@@ -8,9 +9,22 @@ self.addEventListener("install", event => {
         "./style.css",
         "./script.js",
         "./manifest.json",
-        "./icons/icon-192.png", // optional: falls vorhanden
-        "./icons/icon-512.png"  // optional: falls vorhanden
+        "./icons/icon-192.png",
+        "./icons/icon-512.png"
       ]);
+    })
+  );
+});
+
+// 🧹 Aktivierung: Alte Caches bereinigen
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames
+          .filter(name => name !== "eis-store")
+          .map(name => caches.delete(name))
+      );
     })
   );
 });
