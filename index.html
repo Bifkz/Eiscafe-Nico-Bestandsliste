@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#222">
-  <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#222" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
   <title>Eistabelle</title>
 </head>
 <body>
   <div id="loginScreen">
     <h2>🔐 Bitte Benutzercode eingeben</h2>
-    <input type="text" id="userCodeInput" placeholder="z. B. eisp1">
+    <input type="text" id="userCodeInput" placeholder="z. B. eisp1" onkeypress="if(event.key==='Enter'){login()}">
     <button onclick="login()">Anmelden</button>
   </div>
 
@@ -46,6 +46,14 @@
   </div>
 
   <script src="script.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+</body>
+</html>
+
 </body>
 
 </html>
