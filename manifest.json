@@ -1,0 +1,9 @@
+{
+  "name": "Eistabelle",
+  "short_name": "Eistabelle",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#1e1e1e",
+  "theme_color": "#1e1e1e",
+  "icons": []
+}
