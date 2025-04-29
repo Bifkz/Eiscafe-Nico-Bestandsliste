@@ -9,14 +9,18 @@
   <title>Eistabelle</title>
 </head>
 <body>
+  <!-- 🔐 Login-Bereich -->
   <div id="loginScreen">
     <h2>🔐 Bitte Benutzercode eingeben</h2>
-    <input type="text" id="userCodeInput" placeholder="z. B. eisp1" onkeypress="if(event.key==='Enter'){login()}">
+    <input type="text" id="userCodeInput" placeholder="z. B. eisp1"
+           onkeypress="if(event.key==='Enter'){login()}">
     <button onclick="login()">Anmelden</button>
   </div>
 
+  <!-- 🧾 Haupt-App -->
   <div id="mainApp" style="display:none;">
     <h1 class="title">Eistabelle</h1>
+
     <div class="table-container">
       <table id="eisTable">
         <thead>
@@ -29,11 +33,14 @@
         <tbody id="tableBody"></tbody>
       </table>
     </div>
+
     <div class="button-group">
       <button onclick="showDeleteModal()">🗑️ Löschen</button>
       <button onclick="addRow()">+ Neue Sorte</button>
       <button onclick="saveData()">Speichern</button>
     </div>
+
+    <!-- ❌ Lösch-Dialog -->
     <div id="deleteModal" class="modal">
       <div class="modal-content">
         <h3>Welche Sorte löschen?</h3>
@@ -45,6 +52,7 @@
     </div>
   </div>
 
+  <!-- 📜 Script -->
   <script src="script.js"></script>
   <script>
     if ('serviceWorker' in navigator) {
@@ -53,6 +61,7 @@
   </script>
 </body>
 </html>
+
 
 </body>
 
