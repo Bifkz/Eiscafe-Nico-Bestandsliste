@@ -5,6 +5,7 @@
 // 🔐 Login-Codes
 const ALLOWED_USERS = ["eisp0", "eisp1", "eisp2", "eisp3", "eisp9"];
 let userCode = localStorage.getItem("eisUser");
+let isEditing = false; // 👈 zum Schutz vor Datenüberschreibung
 
 // 🔐 JSONBin Zugang
 const BIN_ID = "68112fd0eb52f179214af68b";
@@ -34,7 +35,9 @@ function showMainApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("mainApp").style.display = "block";
   loadData();
-  setInterval(loadData, 10000); // alle 10 Sekunden neu laden
+  setInterval(() => {
+    if (!isEditing) loadData(); // 👈 nur wenn nicht editiert wird
+  }, 10000);
 }
 
 // 📥 Daten aus JSONBin laden
@@ -90,6 +93,13 @@ async function saveData() {
   }
 }
 
+// 📝 Eingabe überwachen und Autosave auslösen
+function handleEdit() {
+  isEditing = true;
+  autoSave();
+  setTimeout(() => isEditing = false, 3000); // nach 3s darf wieder geladen werden
+}
+
 // 💾 Autosave bei Eingabe
 function autoSave() {
   saveData();
@@ -99,9 +109,9 @@ function autoSave() {
 function addRow(name = "", laden = "", lager = "") {
   const row = document.createElement("tr");
   row.innerHTML = `
-    <td><input type="text" value="${name}" oninput="autoSave()"></td>
-    <td><input type="number" value="${laden}" oninput="autoSave()"></td>
-    <td><input type="number" value="${lager}" oninput="autoSave()"></td>
+    <td><input type="text" value="${name}" oninput="handleEdit()"></td>
+    <td><input type="number" value="${laden}" oninput="handleEdit()"></td>
+    <td><input type="number" value="${lager}" oninput="handleEdit()"></td>
   `;
   tableBody.appendChild(row);
 }
@@ -134,6 +144,8 @@ function deleteRow() {
     autoSave();
     hideDeleteModal();
   }
+}
+
 }
 
 
