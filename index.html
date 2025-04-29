@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#222">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <title>Eistabelle</title>
+</head>
+<body>
+  <h1 class="title">Eistabelle</h1>
+  <div class="table-container">
+    <table id="eisTable">
+      <thead>
+        <tr>
+          <th class="col-name">Eissorte</th>
+          <th class="col-small">Laden</th>
+          <th class="col-small">Lager</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+  <div class="button-group">
+    <button onclick="showDeleteModal()">🗑️ Löschen</button>
+</div>
+<div id="deleteModal" class="modal">
+  <div class="modal-content">
+    <h3>Welche Eissorte möchtest du löschen?</h3>
+    <select id="deleteSelect"></select>
+    <br><br>
+    <button onclick="deleteRow()">Löschen</button>
+    <button onclick="hideDeleteModal()">Abbrechen</button>
+  </div>
+</div>
+    <button onclick="addRow()">+ Neue Sorte</button>
+    <button onclick="saveData()">Speichern</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
