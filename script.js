@@ -1,10 +1,24 @@
+// ==========================
+// Eistabelle: script.js
+// ==========================
+
+// 🔐 Zulässige Benutzer
 const ALLOWED_USERS = ["eisp0", "eisp1", "eisp2", "eisp3", "eisp9"];
 let userCode = localStorage.getItem("eisUser");
 
+// 🧊 JSONBin-Zugang
 const BIN_ID = "68112fd0eb52f179214af68b";
 const API_KEY = "$2a$10$TFZncjnXL6i5/i9y7jMDIe6GlWMlF/g4F/u2KnHI7QfGvNV5BQls.";
 const tableBody = document.getElementById("tableBody");
 
+// ▶️ App starten
+window.onload = () => {
+  if (userCode && ALLOWED_USERS.includes(userCode)) {
+    showMainApp();
+  }
+};
+
+// 🔓 Login
 function login() {
   const input = document.getElementById("userCodeInput").value.trim();
   if (ALLOWED_USERS.includes(input)) {
@@ -16,36 +30,34 @@ function login() {
   }
 }
 
+// 🟢 Hauptansicht zeigen
 function showMainApp() {
   document.getElementById("loginScreen").style.display = "none";
   document.getElementById("mainApp").style.display = "block";
   loadData();
 }
 
-window.onload = () => {
-  if (userCode && ALLOWED_USERS.includes(userCode)) {
-    showMainApp();
-  }
-};
-
+// 🔄 Daten laden von JSONBin
 async function loadData() {
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
       headers: { 'X-Master-Key': API_KEY }
     });
-    const data = await res.json();
-    renderTable(data.record);
+    const result = await res.json();
+    renderTable(result.record);
   } catch (err) {
-    console.error("Fehler beim Laden", err);
-    alert("Fehler beim Laden der Daten");
+    console.error("Fehler beim Laden:", err);
+    alert("Daten konnten nicht geladen werden.");
   }
 }
 
+// 🧾 Tabelle anzeigen
 function renderTable(data) {
   tableBody.innerHTML = "";
   data.forEach(row => addRow(row.name, row.laden, row.lager));
 }
 
+// ➕ Neue Zeile hinzufügen
 function addRow(name = "", laden = "", lager = "") {
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -56,6 +68,7 @@ function addRow(name = "", laden = "", lager = "") {
   tableBody.appendChild(row);
 }
 
+// 📥 Tabelleninhalte auslesen
 function getTableData() {
   const rows = tableBody.querySelectorAll("tr");
   return Array.from(rows).map(row => {
@@ -68,6 +81,7 @@ function getTableData() {
   });
 }
 
+// 💾 Automatisch speichern
 async function autoSave() {
   const data = getTableData();
   try {
@@ -80,15 +94,17 @@ async function autoSave() {
       body: JSON.stringify(data)
     });
   } catch (err) {
-    console.error("Fehler beim Speichern", err);
+    console.error("Fehler beim Speichern:", err);
   }
 }
 
+// 💾 Manuelles Speichern mit Feedback
 function saveData() {
   autoSave();
   alert("Gespeichert!");
 }
 
+// 🗑️ Modal zum Löschen anzeigen
 function showDeleteModal() {
   const select = document.getElementById("deleteSelect");
   select.innerHTML = "";
@@ -102,10 +118,12 @@ function showDeleteModal() {
   document.getElementById("deleteModal").style.display = "block";
 }
 
+// ❌ Modal ausblenden
 function hideDeleteModal() {
   document.getElementById("deleteModal").style.display = "none";
 }
 
+// 🚮 Zeile löschen
 function deleteRow() {
   const idx = document.getElementById("deleteSelect").value;
   const rows = tableBody.querySelectorAll("tr");
@@ -114,6 +132,8 @@ function deleteRow() {
     autoSave();
     hideDeleteModal();
   }
+}
+
 }
 
 
