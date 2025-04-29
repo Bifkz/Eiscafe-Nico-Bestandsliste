@@ -1,13 +1,10 @@
-// Konstanten
 const ALLOWED_USERS = ["eisp0", "eisp1", "eisp2", "eisp3", "eisp9"];
 let userCode = localStorage.getItem("eisUser");
 
 const BIN_ID = "68112fd0eb52f179214af68b";
 const API_KEY = "$2a$10$TFZncjnXL6i5/i9y7jMDIe6GlWMlF/g4F/u2KnHI7QfGvNV5BQls.";
-
 const tableBody = document.getElementById("tableBody");
 
-// Login
 function login() {
   const input = document.getElementById("userCodeInput").value.trim();
   if (ALLOWED_USERS.includes(input)) {
@@ -31,13 +28,10 @@ window.onload = () => {
   }
 };
 
-// Daten laden von JSONBin
 async function loadData() {
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-      headers: {
-        'X-Master-Key': API_KEY
-      }
+      headers: { 'X-Master-Key': API_KEY }
     });
     const data = await res.json();
     renderTable(data.record);
@@ -47,7 +41,6 @@ async function loadData() {
   }
 }
 
-// Tabelle darstellen
 function renderTable(data) {
   tableBody.innerHTML = "";
   data.forEach(row => addRow(row.name, row.laden, row.lager));
@@ -96,7 +89,6 @@ function saveData() {
   alert("Gespeichert!");
 }
 
-// Sorten löschen
 function showDeleteModal() {
   const select = document.getElementById("deleteSelect");
   select.innerHTML = "";
